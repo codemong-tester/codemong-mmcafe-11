@@ -41,5 +41,12 @@ public class BoardRepository {
     }
 
 
+    public boolean update(long id, String title, String content) {
+        return jdbc.update("update boards set title = ?, content = ? where id = ?", title, content, id) > 0;
+    }
+    public boolean delete(long id) {
+        return jdbc.update("delete from boards where id = ?", id) > 0;
+    }
+
 
 }
