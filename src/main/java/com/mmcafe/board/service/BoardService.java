@@ -21,15 +21,5 @@ public class BoardService {
     }
 
 
-    @Transactional
-    public BoardResponse updateBoard(long id, BoardRequest request) {
-        if (!repository.update(id, request.title(), request.content())) throw new ResourceNotFoundException("Board not found: " + id);
-        return getBoard(id);
-    }
-    @Transactional
-    public void deleteBoard(long id) {
-        if (!repository.delete(id)) throw new ResourceNotFoundException("Board not found: " + id);
-    }
-
 
 }
