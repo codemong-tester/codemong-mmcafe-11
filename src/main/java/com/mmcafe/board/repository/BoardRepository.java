@@ -32,6 +32,14 @@ public class BoardRepository {
         return jdbc.query("select id, title, content, created_at from boards where id = ?", boardMapper, id).stream().findFirst();
     }
 
+    public List<BoardResponse> findAll(int page, int size) {
+        return jdbc.query("select id, title, content, created_at from boards order by created_at desc, id desc limit ? offset ?", boardMapper, size, page * size);
+    }
+    public long count() {
+        Long count = jdbc.queryForObject("select count(*) from boards", Long.class);
+        return count == null ? 0 : count;
+    }
+
 
 
 }

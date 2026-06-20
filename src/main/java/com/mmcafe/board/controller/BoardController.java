@@ -14,6 +14,11 @@ public class BoardController {
     @GetMapping("/{id}")
     public BoardResponse get(@PathVariable long id) { return service.getBoard(id); }
 
+    @GetMapping
+    public PageResponse<BoardResponse> list(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return service.getBoards(page, size);
+    }
+
 
 
 }
