@@ -1,5 +1,6 @@
 package com.mmcafe.board.repository;
 import com.mmcafe.board.dto.BoardResponse;
+import com.mmcafe.board.dto.CommentResponse;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -48,5 +49,25 @@ public class BoardRepository {
         return jdbc.update("delete from boards where id = ?", id) > 0;
     }
 
+
+    public CommentResponse saveComment(long boardId, String content) {
+        LocalDateTime now = LocalDateTime.now();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("insert into comments(board_id, content, created_at) values (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            ps.setLong(1, boardId);
+            ps.setString(2, content);
+            ps.setTimestamp(3, Timestamp.valueOf(now));
+            return ps;
+        }, keyHolder);
+        return new CommentResponse(keyHolder.getKey().longValue(), boardId, content, now);
+    }
+    public List<CommentResponse> findComments(long boardId) {
+        return jdbc.query("select id, board_id, content, created_at from comments where board_id = ? order by created_at asc, id asc",
+                (rs, rowNum) -> new CommentResponse(rs.getLong("id"), rs.getLong("board_id"), rs.getString("content"), rs.getTimestamp("created_at").toLocalDateTime()), boardId);
+    }
+    public boolean deleteComment(long commentId) {
+        return jdbc.update("delete from comments where id = ?", commentId) > 0;
+    }
 
 }
